@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RP Helper Tool — Chibi Pink Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#4A1942;
+    --pink:#FF6FA5;
+    --pink-deep:#E8447F;
+    --blush:#FFEAF3;
+    --card:#FFFFFF;
+    --lavender:#B98EFF;
+    --mint:#6FE0C2;
+    --gold:#FFC94D;
+    --muted:#9A7C93;
+    --line:#FADCE9;
+    --warn:#E8447F;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  body{
+    background:var(--blush);
+    color:var(--ink);
+    font-family:'Quicksand', sans-serif;
+    min-height:100vh;
+  }
+
+  .wrap{
+    max-width:900px;
+    margin:0 auto;
+    padding:40px 22px 80px;
+  }
+
+  header{
+    text-align:center;
+    margin-bottom:32px;
+  }
+  .back-link{
+    display:inline-block;
+    font-size:0.82rem;
+    font-weight:700;
+    color:var(--muted);
+    text-decoration:none;
+    margin-bottom:14px;
+  }
+  .back-link:hover{ color:var(--pink-deep); }
+  h1{
+    font-family:'Baloo 2', sans-serif;
+    font-size:clamp(1.8rem, 5vw, 2.4rem);
+    font-weight:800;
+  }
+  .subtitle{
+    color:var(--muted);
+    font-weight:600;
+    margin-top:8px;
+  }
+
+  nav.tabs{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-bottom:34px;
+    flex-wrap:wrap;
+  }
+  .tab-btn{
+    background:var(--card);
+    border:2px solid var(--line);
+    color:var(--muted);
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:0.9rem;
+    padding:10px 20px;
+    border-radius:99px;
+    cursor:pointer;
+    transition:all .18s ease;
+  }
+  .tab-btn.active{
+    background:var(--pink);
+    border-color:var(--pink);
+    color:#fff;
+  }
+  .tab-btn:hover:not(.active){ border-color:var(--pink); color:var(--pink-deep); }
+
+  .panel{ display:none; animation:fadeUp .4s ease both; }
+  .panel.active{ display:block; }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(8px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .card{
+    background:var(--card);
+    border:2px solid var(--line);
+    border-radius:22px;
+    padding:28px 26px;
+    margin-bottom:22px;
+  }
+
+  .card h3{
+    font-family:'Baloo 2', sans-serif;
+    font-size:1.15rem;
+    margin-bottom:6px;
+  }
+  .card .hint{
+    color:var(--muted);
+    font-size:0.85rem;
+    margin-bottom:18px;
+  }
+
+  label{
+    display:block;
+    font-weight:700;
+    font-size:0.85rem;
+    margin-bottom:6px;
+    margin-top:16px;
+  }
+  label:first-of-type{ margin-top:0; }
+
+  input[type="number"], textarea, input[type="password"], input[type="text"]{
+    width:100%;
+    border:2px solid var(--line);
+    border-radius:12px;
+    padding:10px 14px;
+    font-family:'Quicksand', sans-serif;
+    font-size:0.92rem;
+    color:var(--ink);
+    background:#FFFDFE;
+  }
+  input:focus, textarea:focus{ outline:none; border-color:var(--pink); }
+  textarea{ resize:vertical; min-height:80px; }
+
+  .field-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:560px){ .field-row{ grid-template-columns:1fr; } }
+
+  .btn{
+    background:var(--pink);
+    color:#fff;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:0.92rem;
+    border:none;
+    padding:12px 26px;
+    border-radius:99px;
+    cursor:pointer;
+    margin-top:20px;
+    transition:transform .15s ease;
+  }
+  .btn:hover{ transform:scale(1.03); }
+  .btn.secondary{
+    background:var(--card);
+    color:var(--pink-deep);
+    border:2px solid var(--pink);
+  }
+
+  .output{
+    margin-top:20px;
+    background:#FFFDFE;
+    border:2px dashed var(--line);
+    border-radius:14px;
+    padding:16px 18px;
+    font-size:0.88rem;
+    line-height:1.9;
+    white-space:pre-wrap;
+    min-height:40px;
+  }
+
+  .error-box{
+    margin-top:12px;
+    background:#FFE8ED;
+    border:2px solid var(--warn);
+    color:var(--pink-deep);
+    border-radius:12px;
+    padding:10px 14px;
+    font-size:0.82rem;
+    font-weight:600;
+    display:none;
+  }
+
+  /* --- chat --- */
+  .chat-window{
+    background:#FFFDFE;
+    border:2px solid var(--line);
+    border-radius:16px;
+    padding:16px;
+    height:340px;
+    overflow-y:auto;
+    margin-top:16px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .msg{
+    max-width:80%;
+    padding:9px 14px;
+    border-radius:14px;
+    font-size:0.88rem;
+    line-height:1.5;
+  }
+  .msg.user{
+    align-self:flex-end;
+    background:var(--pink);
+    color:#fff;
+    border-bottom-right-radius:4px;
+  }
+  .msg.bot{
+    align-self:flex-start;
+    background:var(--line);
+    color:var(--ink);
+    border-bottom-left-radius:4px;
+  }
+  .msg.system{
+    align-self:center;
+    color:var(--muted);
+    font-size:0.78rem;
+    font-style:italic;
+  }
+
+  .chat-input-row{
+    display:flex;
+    gap:10px;
+    margin-top:14px;
+  }
+  .chat-input-row input{ flex:1; }
+  .key-status{
+    font-size:0.75rem;
+    font-weight:700;
+    color:var(--muted);
+    margin-top:10px;
+  }
+  .key-status .active-key{ color:var(--pink-deep); }
+
+  /* --- servers --- */
+  .server-card{
+    background:var(--card);
+    border:2px solid var(--line);
+    border-radius:22px;
+    padding:24px 26px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
+  }
+  .server-badge{
+    font-size:1.8rem;
+    background:#FFE1EC;
+    width:52px; height:52px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .server-info{ flex:1; min-width:200px; }
+  .server-info h4{
+    font-family:'Baloo 2', sans-serif;
+    font-size:1.05rem;
+    margin-bottom:4px;
+  }
+  .server-info p{ color:var(--muted); font-size:0.85rem; }
+  .server-join{
+    background:#5865F2;
+    color:#fff;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:0.85rem;
+    padding:10px 20px;
+    border-radius:99px;
+    text-decoration:none;
+    white-space:nowrap;
+  }
+  .server-join:hover{ opacity:0.9; }
+
+  /* --- tabela ligowa --- */
+  .liga-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:8px;
+    font-size:0.85rem;
+  }
+  .liga-table th, .liga-table td{
+    padding:8px 10px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+  }
+  .liga-table th{
+    font-family:'Baloo 2', sans-serif;
+    color:var(--muted);
+    font-size:0.75rem;
+  }
+  .liga-table td.nazwa{ text-align:left; font-weight:700; }
+  .liga-table tr:first-child td{ font-weight:700; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a href="index.html" class="back-link">← Wróć do hubu</a>
+      <h1>RP Helper Tool 🎙️</h1>
+      <p class="subtitle">Kontuzje, chatbot i polecane serwery w jednym miejscu</p>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="kontuzje">🩹 Kontuzje</button>
+      <button class="tab-btn" data-tab="ingerencja">⚖️ Ingerencja</button>
+      <button class="tab-btn" data-tab="kondycja">🔋 Kondycja</button>
+      <button class="tab-btn" data-tab="tabela">🏆 Tabela</button>
+      <button class="tab-btn" data-tab="transfery">📰 Transfery</button>
+      <button class="tab-btn" data-tab="mvp">⭐ MVP</button>
+      <button class="tab-btn" data-tab="warunki">🌦️ Warunki meczu</button>
+      <button class="tab-btn" data-tab="chatbot">💬 Chatbot</button>
+      <button class="tab-btn" data-tab="przewodnik">📖 Przewodnik</button>
+      <button class="tab-btn" data-tab="serwery">🌍 Polecane serwery</button>
+    </nav>
+
+    <!-- KONTUZJE -->
+    <section class="panel active" id="panel-kontuzje">
+      <div class="card">
+        <h3>Losowanie kontuzji</h3>
+        <p class="hint">Ustaw parametry i wygeneruj gotową listę do wklejenia na Discord.</p>
+
+        <div class="field-row">
+          <div>
+            <label for="liczbaKlubow">Liczba klubów (10–30)</label>
+            <input type="number" id="liczbaKlubow" min="10" max="30" value="16">
+          </div>
+          <div>
+            <label for="liczbaKontuzji">Liczba kontuzji do wylosowania (max 40)</label>
+            <input type="number" id="liczbaKontuzji" min="1" max="40" value="10">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label for="liczbaZawodnikow">Liczba zawodników w puli (max 30)</label>
+            <input type="number" id="liczbaZawodnikow" min="1" max="30" value="25">
+          </div>
+          <div></div>
+        </div>
+
+        <label for="listaKlubow">Lista klubów (opcjonalnie — jeden na linię, format: Nazwa lub :emoji: Nazwa). Jeśli puste, użyję "Klub 1, Klub 2..."</label>
+        <textarea id="listaKlubow" placeholder="np.&#10;<:PuszczaNiepolomice:0000> Puszcza Niepołomice&#10;<:betclic1liga:0000> Widzew Łódź"></textarea>
+
+        <div class="error-box" id="kontuzjeError"></div>
+
+        <button class="btn" id="losujBtn">Losuj kontuzje</button>
+        <button class="btn secondary" id="kopiujBtn" style="display:none;">📋 Kopiuj wynik</button>
+
+        <div class="output" id="kontuzjeOutput"></div>
+      </div>
+    </section>
+
+    <!-- INGERENCJA -->
+    <section class="panel" id="panel-ingerencja">
+      <div class="card">
+        <h3>System ingerencji (drugi system E12)</h3>
+        <p class="hint">Losuj to jako drugi krok — po kontuzjach i po ustaleniu wyniku meczu na podstawie taktyk i składów.</p>
+
+        <div class="field-row">
+          <div>
+            <label for="ingGospodarz">Gospodarz</label>
+            <input type="text" id="ingGospodarz" placeholder="np. Widzew Łódź">
+          </div>
+          <div>
+            <label for="ingGosc">Gość</label>
+            <input type="text" id="ingGosc" placeholder="np. Lech Poznań">
+          </div>
+        </div>
+
+        <div class="hint" style="margin-top:14px;">
+          Ukarany zawodnik losowany jest jako numer od 1 do 11 (tak jak w systemie kontuzji), a minuta zdarzenia jako liczba od 1 do 90.
+        </div>
+
+        <div class="error-box" id="ingError"></div>
+
+        <button class="btn" id="ingLosujBtn">Losuj system ingerencji</button>
+        <button class="btn secondary" id="ingKopiujBtn" style="display:none;">📋 Kopiuj wynik</button>
+
+        <div class="output" id="ingOutput"></div>
+      </div>
+    </section>
+
+    <!-- KONDYCJA -->
+    <section class="panel" id="panel-kondycja">
+      <div class="card">
+        <h3>System kondycji (trzeci system E12)</h3>
+        <p class="hint">Losuj to jako ostatni krok, już po ustaleniu wyniku meczu. Sprawdź kategorię kondycji obu drużyn na odpowiednim kanale przed losowaniem.</p>
+
+        <div class="field-row">
+          <div>
+            <label for="konGospodarz">Gospodarz</label>
+            <input type="text" id="konGospodarz" placeholder="np. Widzew Łódź">
+          </div>
+          <div>
+            <label for="konGosc">Gość</label>
+            <input type="text" id="konGosc" placeholder="np. Lech Poznań">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label for="konKategoriaGospodarz">Kategoria kondycji gospodarza (0–6)</label>
+            <input type="number" id="konKategoriaGospodarz" min="0" max="6" value="3">
+          </div>
+          <div>
+            <label for="konKategoriaGosc">Kategoria kondycji gościa (0–6)</label>
+            <input type="number" id="konKategoriaGosc" min="0" max="6" value="3">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label for="konGoleGospodarz">Gole gospodarza do przelosowania (bez bramek bonusowych z systemu ingerencji)</label>
+            <input type="number" id="konGoleGospodarz" min="0" max="20" value="0">
+          </div>
+          <div>
+            <label for="konGoleGosc">Gole gościa do przelosowania (bez bramek bonusowych z systemu ingerencji)</label>
+            <input type="number" id="konGoleGosc" min="0" max="20" value="0">
+          </div>
+        </div>
+
+        <div class="error-box" id="konError"></div>
+
+        <button class="btn" id="konLosujBtn">Losuj system kondycji</button>
+        <button class="btn secondary" id="konKopiujBtn" style="display:none;">📋 Kopiuj wynik</button>
+
+        <div class="output" id="konOutput"></div>
+      </div>
+    </section>
+
+    <!-- TABELA LIGOWA -->
+    <section class="panel" id="panel-tabela">
+      <div class="card">
+        <h3>Tabela ligowa</h3>
+        <p class="hint">Dodaj wynik meczu, a tabela sama przeliczy punkty i bilans bramek. Zapisuje się w tej przeglądarce.</p>
+
+        <div class="field-row">
+          <div>
+            <label for="tabGospodarz">Gospodarz</label>
+            <input type="text" id="tabGospodarz" placeholder="np. Widzew Łódź">
+          </div>
+          <div>
+            <label for="tabGosc">Gość</label>
+            <input type="text" id="tabGosc" placeholder="np. Lech Poznań">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label for="tabGoleGospodarz">Gole gospodarza</label>
+            <input type="number" id="tabGoleGospodarz" min="0" max="30" value="0">
+          </div>
+          <div>
+            <label for="tabGoleGosc">Gole gościa</label>
+            <input type="number" id="tabGoleGosc" min="0" max="30" value="0">
+          </div>
+        </div>
+
+        <div class="error-box" id="tabError"></div>
+
+        <button class="btn" id="tabDodajBtn">Dodaj mecz do tabeli</button>
+        <button class="btn secondary" id="tabResetBtn">🗑️ Wyczyść całą tabelę</button>
+
+        <div class="output" id="tabOutput" style="white-space:normal;"></div>
+      </div>
+    </section>
+
+    <!-- TRANSFERY -->
+    <section class="panel" id="panel-transfery">
+      <div class="card">
+        <h3>Generator ogłoszeń transferowych</h3>
+        <p class="hint">Wypełnij dane, a otrzymasz gotowy tekst do wklejenia na Discord.</p>
+
+        <div class="field-row">
+          <div>
+            <label for="trZawodnik">Zawodnik</label>
+            <input type="text" id="trZawodnik" placeholder="np. Jan Kowalski">
+          </div>
+          <div>
+            <label for="trPozycja">Pozycja</label>
+            <input type="text" id="trPozycja" placeholder="np. napastnik">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label for="trZKlubu">Z klubu</label>
+            <input type="text" id="trZKlubu" placeholder="np. Widzew Łódź">
+          </div>
+          <div>
+            <label for="trDoKlubu">Do klubu</label>
+            <input type="text" id="trDoKlubu" placeholder="np. Lech Poznań">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label for="trKwota">Kwota transferu (opcjonalnie)</label>
+            <input type="text" id="trKwota" placeholder="np. 4 mln € lub wolny transfer">
+          </div>
+          <div>
+            <label for="trKontrakt">Długość kontraktu (opcjonalnie)</label>
+            <input type="text" id="trKontrakt" placeholder="np. 3 lata">
+          </div>
+        </div>
+
+        <button class="btn" id="trGenerujBtn">Generuj ogłoszenie</button>
+        <button class="btn secondary" id="trKopiujBtn" style="display:none;">📋 Kopiuj wynik</button>
+
+        <div class="output" id="trOutput"></div>
+      </div>
+
+      <div class="card">
+        <h3>🗣️ Plotki transferowe</h3>
+        <p class="hint">Losowa pogłoska na hype przed oknem transferowym — czysta fikcja do zabawy.</p>
+
+        <div class="field-row">
+          <div>
+            <label for="plZawodnik">Zawodnik</label>
+            <input type="text" id="plZawodnik" placeholder="np. Jan Kowalski">
+          </div>
+          <div>
+            <label for="plKlub">Zainteresowany klub</label>
+            <input type="text" id="plKlub" placeholder="np. Legia Warszawa">
+          </div>
+        </div>
+
+        <button class="btn" id="plLosujBtn">Losuj plotkę</button>
+        <div class="output" id="plOutput"></div>
+      </div>
+    </section>
+
+    <!-- MVP -->
+    <section class="panel" id="panel-mvp">
+      <div class="card">
+        <h3>Piłkarz meczu (MVP)</h3>
+        <p class="hint">Losuje numer zawodnika i przykładową statystykę na potrzeby podsumowania meczu.</p>
+
+        <div class="field-row">
+          <div>
+            <label for="mvpDruzyna">Drużyna</label>
+            <input type="text" id="mvpDruzyna" placeholder="np. Widzew Łódź">
+          </div>
+          <div>
+            <label for="mvpMaxNumer">Liczba zawodników w puli (max 30)</label>
+            <input type="number" id="mvpMaxNumer" min="1" max="30" value="11">
+          </div>
+        </div>
+
+        <button class="btn" id="mvpLosujBtn">Losuj piłkarza meczu</button>
+        <div class="output" id="mvpOutput"></div>
+      </div>
+    </section>
+
+    <!-- WARUNKI MECZU -->
+    <section class="panel" id="panel-warunki">
+      <div class="card">
+        <h3>Warunki meczowe</h3>
+        <p class="hint">Losowa pogoda, frekwencja i sędzia — na klimat przed startem RP meczu.</p>
+
+        <div class="field-row">
+          <div>
+            <label for="warStadion">Nazwa stadionu (opcjonalnie)</label>
+            <input type="text" id="warStadion" placeholder="np. Stadion Miejski">
+          </div>
+          <div>
+            <label for="warPojemnosc">Pojemność stadionu (opcjonalnie)</label>
+            <input type="number" id="warPojemnosc" min="500" max="90000" placeholder="np. 18000">
+          </div>
+        </div>
+
+        <button class="btn" id="warLosujBtn">Losuj warunki meczowe</button>
+        <div class="output" id="warOutput"></div>
+      </div>
+    </section>
+
+    <!-- CHATBOT -->
+    <section class="panel" id="panel-chatbot">
+      <div class="card">
+        <h3>Chatbot RP (Gemini)</h3>
+        <p class="hint">Wypełniony terminologią taktyczną — pytaj śmiało o formacje, pressing czy budowanie akcji.</p>
+
+        <div class="error-box" id="chatError"></div>
+
+        <div class="chat-window" id="chatWindow">
+          <div class="msg system">Cześć! Zapytaj mnie o cokolwiek związanego z taktyką albo RP.</div>
+        </div>
+
+        <div class="chat-input-row">
+          <input type="text" id="chatInput" placeholder="Napisz wiadomość...">
+          <button class="btn" id="sendBtn" style="margin-top:0;">Wyślij</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRZEWODNIK -->
+    <section class="panel" id="panel-przewodnik">
+      <div class="card">
+        <h3>Podstawy taktyki, czyli o co tak naprawdę chodzi z tymi cyferkami</h3>
+        <p class="hint">Przewodnik dla nowych na serwerze — bez lania wody.</p>
+
+        <div style="line-height:1.85; font-size:0.95rem;">
+          <p>Nowy gracz wchodzi na kanał, formacji w życiu nie liczył, a już ktoś rzuca "4231 z fałszywą dziewiątką" jakby to była pogoda na jutro. Spokojnie - nikt się z tym słownictwem nie rodzi, więc bez zbędnego pierdzielenia, jedziemy od zera.</p>
+
+          <p><strong>Formacje - te dziwne cyferki.</strong> "4-3-3" albo "3-5-2" to po prostu liczba zawodników w kolejnych liniach, licząc od obrony w stronę ataku - bramkarza nikt nie liczy, on ma swoją osobną kategorię cierpienia. 4-3-3 to czterech obrońców, trzech pomocników, trzech napastników. Schody zaczynają się, gdy ktoś doda "w diamencie" albo "z fałszywą dziewiątką" - to już nie liczba, tylko kształt i rola konkretnego zawodnika w tym kształcie.</p>
+
+          <p><strong>Pressing - kiedy się gonić, a kiedy stać.</strong> Pressing to moment, w którym drużyna bez piłki decyduje się aktywnie odbierać ją rywalowi zamiast czekać w bloku. "Wysoki pressing" - gonimy już pod ich bramką. "Niski blok" - cofamy się i czekamy, aż rywal popełni błąd sam. Jak ktoś pisze "pressing falowy" - to znaczy, że drużyna nie goni cały czas, tylko wybiera konkretny moment (np. podanie wsteczne rywala) i wtedy przyspiesza, zamiast biegać bez celu przez 90 minut.</p>
+
+          <p><strong>Budowanie akcji - bo nie każdy kopie na oślep.</strong> "Budowanie od bramkarza" znaczy, że drużyna próbuje rozegrać piłkę na spokojnie od tyłu, zamiast wybijać ją byle gdzie. Jeśli ktoś pisze o "trójkątach podań", chodzi o to, że każdy zawodnik z piłką ma minimum dwie sensowne opcje podania blisko siebie - stąd płynność, a nie chaotyczne przekładanki.</p>
+
+          <p><strong>Przejścia fazowe - moment, który realnie decyduje o meczu.</strong> To chwila zaraz po odzyskaniu albo stracie piłki, zanim obie drużyny zdążą się na nowo ustawić. Kto szybciej zareaguje w tym momencie, często dostaje najlepszą okazję w całym meczu - dlatego dobrzy trenerzy mają na to osobny, przećwiczony plan, a nie liczą na przypadek.</p>
+
+          <p><strong>Mały słowniczek skrótów, żeby nie było niespodzianek:</strong></p>
+          <p>ŚPD - środkowy pomocnik defensywny (ten, co sprząta).<br>
+          ŚO - środkowy obrońca.<br>
+          SW - skrzydłowy.<br>
+          NR9 - klasyczny środkowy napastnik (numer 9).<br>
+          "Fałszywa 9" - napastnik, który schodzi do gry, zamiast stać na linii obrony rywala.</p>
+
+          <p>Koniec lekcji na dziś. Jak coś z tego nadal brzmi jak zaklęcie - pytaj śmiało na czacie albo w Chatbota powyżej, nikt Cię nie zje za to, że nie wiesz co to ŚPD.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERWERY -->
+    <section class="panel" id="panel-serwery">
+      <div class="card">
+        <h3>Polecane serwery</h3>
+        <p class="hint">Serwery RP, na których warto się rozejrzeć.</p>
+
+        <div class="server-card">
+          <div class="server-badge">⚽</div>
+          <div class="server-info">
+            <h4>Ekstraklasa & 1. Liga</h4>
+            <p>Serwer RP oparty na polskich ligach piłkarskich — dla nowych i doświadczonych graczy.</p>
+          </div>
+          <a href="https://discord.gg/CxWBBxDpf7" target="_blank" rel="noopener" class="server-join">Dołącz →</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+  // --- nawigacja zakładek ---
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // --- losowanie kontuzji (ta sama tabela wag co wcześniej) ---
+  const TABLE = [
+    [130,1],[260,2],[408,3],[556,4],[705,5],
+    [746,6],[787,7],[828,8],[870,9],[912,10],
+    [918,11],[924,12],[930,13],[936,14],[942,15],
+    [948,16],[955,17],[962,18],[969,19],[976,20],
+    [978,21],[980,22],[983,23],[986,24],[989,25],
+    [992,26],[995,27],[997,28],[999,29],[1000,30],
+    [1001,31],[1002,32],[1003,33],[1004,34],
+  ];
+  function losujDlugosc(){
+    const roll = Math.floor(Math.random()*1004)+1;
+    for(const [max,k] of TABLE){ if(roll<=max) return k; }
+    return 34;
+  }
+
+  const kontuzjeError = document.getElementById('kontuzjeError');
+  function pokazBladKontuzje(tekst){
+    kontuzjeError.textContent = tekst;
+    kontuzjeError.style.display = 'block';
+  }
+
+  document.getElementById('losujBtn').addEventListener('click', () => {
+    kontuzjeError.style.display = 'none';
+
+    const liczbaKlubow = parseInt(document.getElementById('liczbaKlubow').value);
+    const liczbaKontuzji = parseInt(document.getElementById('liczbaKontuzji').value);
+    const liczbaZawodnikow = parseInt(document.getElementById('liczbaZawodnikow').value);
+    const listaTekst = document.getElementById('listaKlubow').value.trim();
+
+    if(liczbaKlubow < 10 || liczbaKlubow > 30){
+      pokazBladKontuzje('Liczba klubów musi być między 10 a 30.'); return;
+    }
+    if(liczbaKontuzji < 1 || liczbaKontuzji > 40){
+      pokazBladKontuzje('Liczba kontuzji musi być między 1 a 40.'); return;
+    }
+    if(liczbaZawodnikow < 1 || liczbaZawodnikow > 30){
+      pokazBladKontuzje('Liczba zawodników musi być między 1 a 30.'); return;
+    }
+
+    let kluby = [];
+    if(listaTekst){
+      kluby = listaTekst.split('\n').map(l => l.trim()).filter(Boolean);
+    } else {
+      for(let i=1;i<=liczbaKlubow;i++) kluby.push('Klub ' + i);
+    }
+
+    const wynik = [];
+    for(let i=0;i<liczbaKontuzji;i++){
+      const klub = kluby[Math.floor(Math.random()*kluby.length)];
+      const zawodnikNr = Math.floor(Math.random()*liczbaZawodnikow)+1;
+      const kolejki = losujDlugosc();
+      wynik.push(`${klub} **Zawodnik ${zawodnikNr}** kontuzjowany na ${kolejki} kolejki włącznie ⚠️`);
+    }
+
+    document.getElementById('kontuzjeOutput').textContent = wynik.join('\n');
+    document.getElementById('kopiujBtn').style.display = 'inline-block';
+  });
+
+  document.getElementById('kopiujBtn').addEventListener('click', () => {
+    const tekst = document.getElementById('kontuzjeOutput').textContent;
+    navigator.clipboard.writeText(tekst);
+  });
+
+  // ============================================================
+  // --- SYSTEM INGERENCJI (drugi system E12) ---
+  // ============================================================
+
+  const ingError = document.getElementById('ingError');
+  function pokazBladIng_(tekst){
+    ingError.textContent = tekst;
+    ingError.style.display = 'block';
+  }
+
+  document.getElementById('ingLosujBtn').addEventListener('click', () => {
+    ingError.style.display = 'none';
+
+    const gospodarz = document.getElementById('ingGospodarz').value.trim() || 'Gospodarz';
+    const gosc = document.getElementById('ingGosc').value.trim() || 'Gość';
+
+    const linie = [];
+
+    // KROK 1: !roll 20
+    const roll20 = Math.floor(Math.random()*20)+1;
+    linie.push(`🎲 !roll 20 → **${roll20}**`);
+
+    let faworyt = null;
+    if(roll20 <= 5){ faworyt = 'gospodarz'; }
+    else if(roll20 >= 18){ faworyt = 'gosc'; }
+
+    if(!faworyt){
+      linie.push(`Wynik 6–17 → **brak ingerencji**. Pomijamy dalsze kroki tego systemu.`);
+      document.getElementById('ingOutput').textContent = linie.join('\n');
+      document.getElementById('ingKopiujBtn').style.display = 'inline-block';
+      return;
+    }
+
+    const druzynaFaworyzowana = faworyt === 'gospodarz' ? gospodarz : gosc;
+    const druzynaRywala = faworyt === 'gospodarz' ? gosc : gospodarz;
+
+    linie.push(`Wynik ${roll20 <= 5 ? '1–5' : '18–20'} → **ingerencja na korzyść: ${druzynaFaworyzowana}**`);
+
+    // KROK 2: !roll 5000
+    const roll5000 = Math.floor(Math.random()*5000)+1;
+    linie.push(`\n🎲 !roll 5000 → **${roll5000}**`);
+
+    function dodajKartke_(){
+      const numer = Math.floor(Math.random()*11)+1;
+      const minuta = Math.floor(Math.random()*90)+1;
+      linie.push(`🔴 Ukarany zawodnik (${druzynaRywala}): **Zawodnik ${numer}**, minuta **${minuta}'**`);
+    }
+
+    function dodajKarny_(){
+      const roll200 = Math.floor(Math.random()*200)+1;
+      const roll100 = Math.floor(Math.random()*100)+1;
+      let opis;
+      if(roll200 <= 150) opis = '✅ karny wykorzystany, gol';
+      else if(roll200 <= 159) opis = '⚽ karny niewykorzystany, ale gol po dobitce';
+      else if(roll200 === 160) opis = '🥅 karny niewykorzystany, ale gol samobójczy bramkarza/obrońcy';
+      else opis = '❌ karny niewykorzystany, brak gola';
+      linie.push(`🎲 !roll 200 (rzut karny, ${druzynaFaworyzowana}) → **${roll200}** — ${opis}`);
+      linie.push(`🎲 !roll 100 (minuta karnego) → **${roll100}'**`);
+    }
+
+    if(roll5000 <= 575){
+      linie.push(`(11,5%) → **bezpośrednia czerwona kartka dla ${druzynaRywala}**`);
+      dodajKartke_();
+    } else if(roll5000 <= 625){
+      linie.push(`(1,0%) → **dwie bezpośrednie czerwone kartki dla ${druzynaRywala}**`);
+      dodajKartke_(); dodajKartke_();
+    } else if(roll5000 <= 975){
+      linie.push(`(7,0%) → **druga żółta → czerwona dla ${druzynaRywala}**`);
+      dodajKartke_();
+    } else if(roll5000 <= 1200){
+      linie.push(`(4,5%) → **bezpośrednia czerwona dla ${druzynaRywala} + rzut karny dla ${druzynaFaworyzowana}**`);
+      dodajKartke_();
+      dodajKarny_();
+    } else if(roll5000 <= 1350){
+      linie.push(`(3,0%) → **druga żółta dla ${druzynaRywala} + rzut karny dla ${druzynaFaworyzowana}**`);
+      dodajKartke_();
+      dodajKarny_();
+    } else if(roll5000 <= 2500){
+      linie.push(`(23,0%) → **VAR anuluje jednego gola drużynie ${druzynaRywala}** — wybierz samodzielnie który gol.`);
+    } else if(roll5000 <= 2950){
+      linie.push(`(9,0%) → **VAR: rzut karny dla ${druzynaFaworyzowana} + anulowany gol drużyny ${druzynaRywala}** (dwa niezależne wydarzenia) — wybierz samodzielnie który gol anulować.`);
+      dodajKarny_();
+    } else if(roll5000 <= 4900){
+      linie.push(`(39,0%) → **rzut karny dla ${druzynaFaworyzowana}**`);
+      dodajKarny_();
+    } else {
+      linie.push(`(2,0%) → **dwa rzuty karne dla ${druzynaFaworyzowana}**`);
+      dodajKarny_(); dodajKarny_();
+    }
+
+    document.getElementById('ingOutput').textContent = linie.join('\n');
+    document.getElementById('ingKopiujBtn').style.display = 'inline-block';
+  });
+
+  document.getElementById('ingKopiujBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('ingOutput').textContent);
+  });
+
+  // ============================================================
+  // --- SYSTEM KONDYCJI (trzeci system E12) ---
+  // ============================================================
+
+  const TABELA_KONDYCJI = {
+    6: [[90,'gol nie zostaje zaliczony'],[120,'rywal dostaje dodatkową bramkę'],[135,'kontuzja zawodnika po meczu'],[300,'nic się nie dzieje']],
+    5: [[75,'gol nie zostaje zaliczony'],[99,'rywal dostaje dodatkową bramkę'],[111,'kontuzja zawodnika po meczu'],[300,'nic się nie dzieje']],
+    4: [[60,'gol nie zostaje zaliczony'],[78,'rywal dostaje dodatkową bramkę'],[87,'kontuzja zawodnika po meczu'],[300,'nic się nie dzieje']],
+    3: [[45,'gol nie zostaje zaliczony'],[60,'rywal dostaje dodatkową bramkę'],[66,'kontuzja zawodnika po meczu'],[300,'nic się nie dzieje']],
+    2: [[30,'gol nie zostaje zaliczony'],[39,'rywal dostaje dodatkową bramkę'],[42,'kontuzja zawodnika po meczu'],[300,'nic się nie dzieje']],
+    1: [[15,'gol nie zostaje zaliczony'],[21,'rywal dostaje dodatkową bramkę'],[24,'kontuzja zawodnika po meczu'],[300,'nic się nie dzieje']],
+    0: [[9,'gol nie zostaje zaliczony'],[12,'rywal dostaje dodatkową bramkę'],[15,'kontuzja zawodnika po meczu'],[300,'nic się nie dzieje']],
+  };
+
+  const konError = document.getElementById('konError');
+  function pokazBladKon_(tekst){
+    konError.textContent = tekst;
+    konError.style.display = 'block';
+  }
+
+  function losujKondycjeDlaBramek_(nazwaDruzyny, liczbaGoli, kategoria, linie){
+    const tabela = TABELA_KONDYCJI[kategoria];
+    for(let i=1;i<=liczbaGoli;i++){
+      const roll300 = Math.floor(Math.random()*300)+1;
+      let opis = 'nic się nie dzieje';
+      for(const [max,tekst] of tabela){ if(roll300<=max){ opis = tekst; break; } }
+      linie.push(`🎲 !roll 300 (${nazwaDruzyny}, gol #${i}) → **${roll300}** — ${opis}`);
+    }
+  }
+
+  document.getElementById('konLosujBtn').addEventListener('click', () => {
+    konError.style.display = 'none';
+
+    const gospodarz = document.getElementById('konGospodarz').value.trim() || 'Gospodarz';
+    const gosc = document.getElementById('konGosc').value.trim() || 'Gość';
+    const katGospodarz = parseInt(document.getElementById('konKategoriaGospodarz').value);
+    const katGosc = parseInt(document.getElementById('konKategoriaGosc').value);
+    const goleGospodarz = parseInt(document.getElementById('konGoleGospodarz').value) || 0;
+    const goleGosc = parseInt(document.getElementById('konGoleGosc').value) || 0;
+
+    if(katGospodarz < 0 || katGospodarz > 6 || katGosc < 0 || katGosc > 6){
+      pokazBladKon_('Kategoria kondycji musi być między 0 a 6.'); return;
+    }
+    if(goleGospodarz < 0 || goleGosc < 0){
+      pokazBladKon_('Liczba goli nie może być ujemna.'); return;
+    }
+
+    const linie = [];
+    linie.push(`${gospodarz} — kategoria kondycji ${katGospodarz}, gole do przelosowania: ${goleGospodarz}`);
+    linie.push(`${gosc} — kategoria kondycji ${katGosc}, gole do przelosowania: ${goleGosc}`);
+    linie.push('');
+
+    if(goleGospodarz === 0 && goleGosc === 0){
+      linie.push('Brak bramek do przelosowania w tym systemie.');
+    } else {
+      if(goleGospodarz > 0){ losujKondycjeDlaBramek_(gospodarz, goleGospodarz, katGospodarz, linie); }
+      if(goleGosc > 0){ losujKondycjeDlaBramek_(gosc, goleGosc, katGosc, linie); }
+    }
+
+    document.getElementById('konOutput').textContent = linie.join('\n');
+    document.getElementById('konKopiujBtn').style.display = 'inline-block';
+  });
+
+  document.getElementById('konKopiujBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('konOutput').textContent);
+  });
+
+  // ============================================================
+  // --- TABELA LIGOWA ---
+  // ============================================================
+
+  const KLUCZ_TABELI = 'rpToolLigaMecze';
+
+  function wczytajMecze_(){
+    try{ return JSON.parse(localStorage.getItem(KLUCZ_TABELI)) || []; }
+    catch{ return []; }
+  }
+  function zapiszMecze_(mecze){
+    localStorage.setItem(KLUCZ_TABELI, JSON.stringify(mecze));
+  }
+
+  function obliczTabele_(mecze){
+    const druzyny = {};
+    function pobierz(nazwa){
+      if(!druzyny[nazwa]){
+        druzyny[nazwa] = { nazwa, m:0, z:0, r:0, p:0, bz:0, bs:0, pkt:0 };
+      }
+      return druzyny[nazwa];
+    }
+    mecze.forEach(mecz => {
+      const gosp = pobierz(mecz.gospodarz);
+      const gos = pobierz(mecz.gosc);
+      gosp.m++; gos.m++;
+      gosp.bz += mecz.goleGospodarza; gosp.bs += mecz.goleGoscia;
+      gos.bz += mecz.goleGoscia; gos.bs += mecz.goleGospodarza;
+      if(mecz.goleGospodarza > mecz.goleGoscia){ gosp.z++; gosp.pkt += 3; gos.p++; }
+      else if(mecz.goleGospodarza < mecz.goleGoscia){ gos.z++; gos.pkt += 3; gosp.p++; }
+      else { gosp.r++; gos.r++; gosp.pkt++; gos.pkt++; }
+    });
+    return Object.values(druzyny).sort((a,b) => {
+      if(b.pkt !== a.pkt) return b.pkt - a.pkt;
+      const bilA = a.bz - a.bs, bilB = b.bz - b.bs;
+      if(bilB !== bilA) return bilB - bilA;
+      return b.bz - a.bz;
+    });
+  }
+
+  function renderujTabele_(){
+    const mecze = wczytajMecze_();
+    const wynik = document.getElementById('tabOutput');
+    if(mecze.length === 0){
+      wynik.textContent = 'Brak rozegranych meczów — dodaj pierwszy wynik.';
+      return;
+    }
+    const tabela = obliczTabele_(mecze);
+    let html = '<table class="liga-table"><thead><tr>' +
+      '<th>#</th><th style="text-align:left;">Drużyna</th><th>M</th><th>Z</th><th>R</th><th>P</th><th>Bramki</th><th>Bil.</th><th>Pkt</th>' +
+      '</tr></thead><tbody>';
+    tabela.forEach((d,i) => {
+      html += `<tr><td>${i+1}</td><td class="nazwa">${d.nazwa}</td><td>${d.m}</td><td>${d.z}</td><td>${d.r}</td><td>${d.p}</td><td>${d.bz}:${d.bs}</td><td>${d.bz-d.bs >= 0 ? '+' : ''}${d.bz-d.bs}</td><td>${d.pkt}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    wynik.innerHTML = html;
+  }
+
+  const tabError = document.getElementById('tabError');
+  document.getElementById('tabDodajBtn').addEventListener('click', () => {
+    tabError.style.display = 'none';
+    const gospodarz = document.getElementById('tabGospodarz').value.trim();
+    const gosc = document.getElementById('tabGosc').value.trim();
+    const goleGospodarza = parseInt(document.getElementById('tabGoleGospodarz').value);
+    const goleGoscia = parseInt(document.getElementById('tabGoleGosc').value);
+
+    if(!gospodarz || !gosc){
+      tabError.textContent = 'Podaj nazwy obu drużyn.';
+      tabError.style.display = 'block';
+      return;
+    }
+    if(isNaN(goleGospodarza) || isNaN(goleGoscia) || goleGospodarza < 0 || goleGoscia < 0){
+      tabError.textContent = 'Liczba bramek musi być liczbą nieujemną.';
+      tabError.style.display = 'block';
+      return;
+    }
+
+    const mecze = wczytajMecze_();
+    mecze.push({ gospodarz, gosc, goleGospodarza, goleGoscia });
+    zapiszMecze_(mecze);
+    renderujTabele_();
+
+    document.getElementById('tabGospodarz').value = '';
+    document.getElementById('tabGosc').value = '';
+    document.getElementById('tabGoleGospodarz').value = '0';
+    document.getElementById('tabGoleGosc').value = '0';
+  });
+
+  document.getElementById('tabResetBtn').addEventListener('click', () => {
+    if(confirm('Na pewno wyczyścić całą tabelę? Tej operacji nie da się cofnąć.')){
+      zapiszMecze_([]);
+      renderujTabele_();
+    }
+  });
+
+  renderujTabele_();
+
+  // ============================================================
+  // --- TRANSFERY: generator ogłoszeń ---
+  // ============================================================
+
+  document.getElementById('trGenerujBtn').addEventListener('click', () => {
+    const zawodnik = document.getElementById('trZawodnik').value.trim() || 'Zawodnik';
+    const pozycja = document.getElementById('trPozycja').value.trim();
+    const zKlubu = document.getElementById('trZKlubu').value.trim() || 'klubu X';
+    const doKlubu = document.getElementById('trDoKlubu').value.trim() || 'klubu Y';
+    const kwota = document.getElementById('trKwota').value.trim();
+    const kontrakt = document.getElementById('trKontrakt').value.trim();
+
+    let tekst = `📰 **TRANSFER POTWIERDZONY** 📰\n\n`;
+    tekst += `${zawodnik}${pozycja ? ' (' + pozycja + ')' : ''} przechodzi z ${zKlubu} do ${doKlubu}!\n`;
+    if(kwota) tekst += `💰 Kwota transferu: ${kwota}\n`;
+    if(kontrakt) tekst += `📄 Nowy kontrakt: ${kontrakt}\n`;
+    tekst += `\nPowodzenia na nowym boisku! ⚽`;
+
+    document.getElementById('trOutput').textContent = tekst;
+    document.getElementById('trKopiujBtn').style.display = 'inline-block';
+  });
+
+  document.getElementById('trKopiujBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('trOutput').textContent);
+  });
+
+  // --- Plotki transferowe ---
+  const SZABLONY_PLOTEK = [
+    'Nasze źródła donoszą, że {klub} przygląda się sytuacji {zawodnik} — na razie żadnych oficjalnych rozmów.',
+    'Podobno przedstawiciele {zawodnik} mieli w tym tygodniu nieformalne spotkanie z działaczami {klub}. Plotka czy coś więcej?',
+    '{klub} podobno przygotowuje ofertę za {zawodnik}, ale klub macierzysty ma zupełnie inne oczekiwania finansowe.',
+    'Kibice {klub} zaczynają marzyć — w sieci krąży plotka, że {zawodnik} rozważa zmianę otoczenia.',
+    'Agent {zawodnik} zaprzecza jakoby prowadził rozmowy z {klub}, ale dziennikarze nie dają za wygraną.',
+    'Wewnętrzne źródła sugerują, że {klub} ma {zawodnik} na krótkiej liście życzeń przed oknem transferowym.',
+  ];
+
+  document.getElementById('plLosujBtn').addEventListener('click', () => {
+    const zawodnik = document.getElementById('plZawodnik').value.trim() || 'wskazany zawodnik';
+    const klub = document.getElementById('plKlub').value.trim() || 'zainteresowany klub';
+    const szablon = SZABLONY_PLOTEK[Math.floor(Math.random()*SZABLONY_PLOTEK.length)];
+    const tekst = '🗣️ ' + szablon.replaceAll('{zawodnik}', zawodnik).replaceAll('{klub}', klub);
+    document.getElementById('plOutput').textContent = tekst;
+  });
+
+  // ============================================================
+  // --- MVP MECZU ---
+  // ============================================================
+
+  const OCENY_MVP = [6.5,6.8,7.0,7.2,7.4,7.5,7.6,7.8,8.0,8.2,8.5,8.8,9.0,9.2];
+
+  document.getElementById('mvpLosujBtn').addEventListener('click', () => {
+    const druzyna = document.getElementById('mvpDruzyna').value.trim() || 'drużyna';
+    let maxNumer = parseInt(document.getElementById('mvpMaxNumer').value);
+    if(isNaN(maxNumer) || maxNumer < 1) maxNumer = 11;
+    if(maxNumer > 30) maxNumer = 30;
+
+    const numer = Math.floor(Math.random()*maxNumer)+1;
+    const ocena = OCENY_MVP[Math.floor(Math.random()*OCENY_MVP.length)];
+    const gole = Math.random() < 0.4 ? Math.floor(Math.random()*3)+1 : 0;
+    const asysty = Math.random() < 0.3 ? Math.floor(Math.random()*2)+1 : 0;
+
+    let tekst = `⭐ Piłkarz meczu (${druzyna}): **Zawodnik ${numer}**\n`;
+    tekst += `Ocena: **${ocena.toFixed(1)}**\n`;
+    if(gole > 0) tekst += `⚽ Gole: ${gole}\n`;
+    if(asysty > 0) tekst += `🅰️ Asysty: ${asysty}\n`;
+    if(gole === 0 && asysty === 0) tekst += `Solidny występ bez bezpośredniego udziału przy golu.\n`;
+
+    document.getElementById('mvpOutput').textContent = tekst;
+  });
+
+  // ============================================================
+  // --- WARUNKI MECZOWE ---
+  // ============================================================
+
+  const POGODY = [
+    { opis: 'Słonecznie, bezchmurne niebo', temp: [18,26] },
+    { opis: 'Lekkie zachmurzenie, przyjemna aura', temp: [14,20] },
+    { opis: 'Pochmurno, bez opadów', temp: [8,15] },
+    { opis: 'Deszczowo, śliska murawa', temp: [6,12] },
+    { opis: 'Silny wiatr, trudne warunki do gry górą', temp: [5,14] },
+    { opis: 'Mglisto, ograniczona widoczność na trybunach', temp: [3,9] },
+    { opis: 'Śnieg, ciężka i wolna murawa', temp: [-4,2] },
+  ];
+  const SEDZIOWIE = [
+    'Marek Wiśniewski', 'Tomasz Kowalczyk', 'Paweł Zieliński', 'Krzysztof Nowak',
+    'Adam Szymański', 'Rafał Dąbrowski', 'Piotr Wojciechowski',
+  ];
+
+  document.getElementById('warLosujBtn').addEventListener('click', () => {
+    const stadion = document.getElementById('warStadion').value.trim() || 'Stadion Miejski';
+    const pojemnoscInput = parseInt(document.getElementById('warPojemnosc').value);
+    const pojemnosc = (!isNaN(pojemnoscInput) && pojemnoscInput > 0) ? pojemnoscInput : (Math.floor(Math.random()*25000)+5000);
+
+    const pogoda = POGODY[Math.floor(Math.random()*POGODY.length)];
+    const temperatura = Math.floor(Math.random()*(pogoda.temp[1]-pogoda.temp[0]+1))+pogoda.temp[0];
+    const frekwencjaProc = Math.floor(Math.random()*50)+45; // 45-94%
+    const frekwencja = Math.round(pojemnosc * (frekwencjaProc/100));
+    const sedzia = SEDZIOWIE[Math.floor(Math.random()*SEDZIOWIE.length)];
+
+    let tekst = `🏟️ ${stadion}\n`;
+    tekst += `🌦️ Pogoda: ${pogoda.opis}, temperatura ${temperatura}°C\n`;
+    tekst += `👥 Frekwencja: ${frekwencja.toLocaleString('pl-PL')} / ${pojemnosc.toLocaleString('pl-PL')} (${frekwencjaProc}%)\n`;
+    tekst += `🧑‍⚖️ Sędzia główny: ${sedzia}`;
+
+    document.getElementById('warOutput').textContent = tekst;
+  });
+
+  // ============================================================
+
+  // --- chatbot RP (woła bezpieczny proxy zamiast Gemini bezpośrednio) ---
+  // Klucz API NIE jest tutaj — siedzi we "Właściwościach skryptu" Google Apps Script.
+  // Podmień poniższy URL na adres swojego wdrożonego Web App (patrz instrukcja).
+  const PROXY_URL = 'https://script.google.com/macros/s/AKfycbxTMvLl86xZET4Jrizyq_e5rwOh3uW93PhFY8BJH5mEKeh75rw5DQQ5yV7BKfgMDGS_/exec';
+
+  const chatWindow = document.getElementById('chatWindow');
+  const chatError = document.getElementById('chatError');
+
+  function dodajWiadomosc(tekst, typ){
+    const div = document.createElement('div');
+    div.className = 'msg ' + typ;
+    div.textContent = tekst;
+    chatWindow.appendChild(div);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+
+  async function zapytajProxy(wiadomosc){
+    // Uwaga: content-type "text/plain" (nie "application/json") celowo —
+    // Google Apps Script nie obsługuje zapytań "preflight" (OPTIONS),
+    // a text/plain omija ten problem w przeglądarce. Treść i tak jest JSON-em.
+    const res = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ message: wiadomosc })
+    });
+
+    const dane = await res.json();
+    if(dane.error){ throw new Error(dane.error); }
+    return dane.text;
+  }
+
+  async function wyslijWiadomosc(){
+    const input = document.getElementById('chatInput');
+    const tekst = input.value.trim();
+    if(!tekst) return;
+
+    chatError.style.display = 'none';
+    dodajWiadomosc(tekst, 'user');
+    input.value = '';
+
+    try{
+      const odpowiedz = await zapytajProxy(tekst);
+      dodajWiadomosc(odpowiedz, 'bot');
+    } catch(e){
+      if(e.message === 'LIMIT'){
+        chatError.textContent = 'Chwilowo za dużo zapytań do bota, spróbuj za minutę.';
+      } else {
+        chatError.textContent = 'Błąd: ' + e.message + ' — spróbuj ponownie za chwilę.';
+      }
+      chatError.style.display = 'block';
+    }
+  }
+
+  document.getElementById('sendBtn').addEventListener('click', wyslijWiadomosc);
+  document.getElementById('chatInput').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') wyslijWiadomosc();
+  });
+</script>
+</body>
+</html>

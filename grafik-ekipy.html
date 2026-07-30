@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grafik Ekipy — Chibi Pink Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#4A1942;
+    --pink:#FF6FA5;
+    --pink-deep:#E8447F;
+    --blush:#FFEAF3;
+    --card:#FFFFFF;
+    --lavender:#B98EFF;
+    --mint:#6FE0C2;
+    --gold:#FFC94D;
+    --muted:#9A7C93;
+    --line:#FADCE9;
+    --ok:#1f8a5f;
+    --ok-bg:#DFF7EC;
+    --no:#c94b4b;
+    --no-bg:#FFE1E1;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  body{
+    background:var(--blush);
+    color:var(--ink);
+    font-family:'Quicksand', sans-serif;
+    min-height:100vh;
+  }
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:40px 22px 80px;
+  }
+
+  header{ text-align:center; margin-bottom:28px; }
+  .back-link{
+    display:inline-block;
+    font-size:0.82rem;
+    font-weight:700;
+    color:var(--muted);
+    text-decoration:none;
+    margin-bottom:14px;
+  }
+  .back-link:hover{ color:var(--pink-deep); }
+  h1{
+    font-family:'Baloo 2', sans-serif;
+    font-size:clamp(1.8rem, 5vw, 2.4rem);
+    font-weight:800;
+  }
+  .subtitle{ color:var(--muted); font-weight:600; margin-top:8px; }
+
+  .card{
+    background:var(--card);
+    border:2px solid var(--line);
+    border-radius:22px;
+    padding:26px 24px;
+    margin-bottom:22px;
+  }
+
+  label{ display:block; font-weight:700; font-size:0.85rem; margin-bottom:6px; }
+  input[type="text"]{
+    width:100%;
+    border:2px solid var(--line);
+    border-radius:12px;
+    padding:10px 14px;
+    font-family:'Quicksand', sans-serif;
+    font-size:0.92rem;
+    color:var(--ink);
+    background:#FFFDFE;
+  }
+  input:focus{ outline:none; border-color:var(--pink); }
+
+  .btn{
+    background:var(--pink);
+    color:#fff;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:0.92rem;
+    border:none;
+    padding:11px 24px;
+    border-radius:99px;
+    cursor:pointer;
+    margin-top:16px;
+    transition:transform .15s ease;
+  }
+  .btn:hover{ transform:scale(1.03); }
+  .btn.secondary{
+    background:var(--card);
+    color:var(--pink-deep);
+    border:2px solid var(--pink);
+  }
+  .btn.small{ padding:8px 18px; font-size:0.82rem; margin-top:0; }
+
+  .login-row{ display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; }
+  .login-row > div{ flex:1; min-width:180px; }
+
+  .who-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .who-badge{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:1rem;
+    color:var(--pink-deep);
+  }
+
+  nav.tabs{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-bottom:24px;
+    flex-wrap:wrap;
+  }
+  .tab-btn{
+    background:var(--card);
+    border:2px solid var(--line);
+    color:var(--muted);
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:0.9rem;
+    padding:10px 20px;
+    border-radius:99px;
+    cursor:pointer;
+    transition:all .18s ease;
+  }
+  .tab-btn.active{ background:var(--pink); border-color:var(--pink); color:#fff; }
+  .tab-btn:hover:not(.active){ border-color:var(--pink); color:var(--pink-deep); }
+
+  .panel{ display:none; animation:fadeUp .4s ease both; }
+  .panel.active{ display:block; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .hint{ color:var(--muted); font-size:0.85rem; margin-bottom:18px; }
+
+  .grafik-table{ width:100%; border-collapse:collapse; }
+  .grafik-table th{
+    font-family:'Baloo 2', sans-serif;
+    font-size:0.78rem;
+    color:var(--muted);
+    padding:6px 4px;
+  }
+  .grafik-table td{ padding:5px; }
+
+  .slot-cell{
+    cursor:pointer;
+    border-radius:10px;
+    padding:14px 4px;
+    text-align:center;
+    font-weight:700;
+    font-size:0.78rem;
+    background:var(--blush);
+    color:var(--muted);
+    border:2px solid var(--line);
+    transition:transform .12s ease, background .12s ease, border-color .12s ease;
+    position:relative;
+  }
+  .slot-cell:hover{ transform:scale(1.05); }
+  .slot-cell.dostepny{ background:var(--ok-bg); color:var(--ok); border-color:var(--ok); }
+  .slot-cell.niedostepny{ background:var(--no-bg); color:var(--no); border-color:var(--no); }
+  .slot-note-dot{
+    position:absolute;
+    top:3px;
+    right:5px;
+    font-size:0.6rem;
+  }
+
+  .legend{
+    display:flex;
+    gap:16px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:16px;
+    font-size:0.8rem;
+    color:var(--muted);
+    font-weight:600;
+  }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .dot{ width:12px; height:12px; border-radius:4px; display:inline-block; }
+  .dot.dostepny{ background:var(--ok-bg); border:2px solid var(--ok); }
+  .dot.niedostepny{ background:var(--no-bg); border:2px solid var(--no); }
+  .dot.brak{ background:var(--blush); border:2px solid var(--line); }
+
+  .team-table-wrap{ overflow-x:auto; }
+  .team-table{ width:100%; border-collapse:collapse; min-width:620px; }
+  .team-table th, .team-table td{ padding:4px; text-align:center; }
+  .team-table th{ font-family:'Baloo 2', sans-serif; font-size:0.7rem; color:var(--muted); }
+  .team-nick{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:0.85rem;
+    text-align:left !important;
+    white-space:nowrap;
+    padding-right:12px !important;
+  }
+  .team-dot{
+    width:20px; height:20px;
+    border-radius:6px;
+    margin:0 auto;
+    border:2px solid var(--line);
+    background:var(--blush);
+  }
+  .team-dot.dostepny{ background:var(--ok-bg); border-color:var(--ok); }
+  .team-dot.niedostepny{ background:var(--no-bg); border-color:var(--no); }
+
+  .empty-info{
+    text-align:center;
+    color:var(--muted);
+    font-weight:600;
+    font-size:0.9rem;
+    padding:20px 0;
+  }
+
+  /* --- Wydarzenia --- */
+  .wydarzenie-item{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 4px;
+    border-bottom:1.5px dashed var(--line);
+  }
+  .wydarzenie-item:last-child{ border-bottom:none; }
+  .wyd-data-badge{
+    flex-shrink:0;
+    background:var(--blush);
+    border:2px solid var(--line);
+    border-radius:12px;
+    padding:8px 12px;
+    text-align:center;
+    min-width:64px;
+  }
+  .wyd-data-badge .dzien{ font-family:'Baloo 2', sans-serif; font-weight:800; font-size:1.1rem; color:var(--pink-deep); line-height:1; }
+  .wyd-data-badge .miesiac{ font-size:0.65rem; color:var(--muted); font-weight:700; text-transform:uppercase; }
+  .wyd-godzina{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    color:var(--pink-deep);
+    font-size:0.85rem;
+    flex-shrink:0;
+    min-width:48px;
+  }
+  .wyd-opis{ flex:1; font-weight:600; font-size:0.9rem; }
+  .wyd-dodal{ font-size:0.7rem; color:var(--muted); font-weight:600; }
+  .wyd-usun{
+    background:none;
+    border:none;
+    color:var(--muted);
+    cursor:pointer;
+    font-size:0.9rem;
+    flex-shrink:0;
+  }
+  .wyd-usun:hover{ color:var(--no); }
+  .wydarzenie-item.przeszle{ opacity:0.5; }
+
+  footer{
+    margin-top:48px;
+    text-align:center;
+    font-size:0.78rem;
+    color:var(--muted);
+    font-weight:600;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a href="index.html" class="back-link">← Wróć do hubu</a>
+    <h1>📅 Grafik Ekipy</h1>
+    <div class="subtitle">Zaznacz swoją dostępność, zobacz kto kiedy jest wolny.</div>
+  </header>
+
+  <!-- LOGOWANIE (tylko nick) -->
+  <div class="card" id="loginCard">
+    <label for="nickInput">Twój nick</label>
+    <div class="login-row">
+      <div><input type="text" id="nickInput" maxlength="24" placeholder="Wpisz nick i wejdź"></div>
+      <div style="flex:0;"><button class="btn" id="wejdzBtn">Wejdź</button></div>
+    </div>
+  </div>
+
+  <!-- PO ZALOGOWANIU -->
+  <div class="card" id="zalogowanyCard" style="display:none;">
+    <div class="who-row">
+      <div class="who-badge" id="aktualnyNickLabel"></div>
+      <button class="btn secondary small" id="zmienNickBtn">Zmień nick</button>
+    </div>
+  </div>
+
+  <div id="appSection" style="display:none;">
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="moj">Mój grafik</button>
+      <button class="tab-btn" data-tab="ekipa">Cała ekipa</button>
+      <button class="tab-btn" data-tab="wydarzenia">Wydarzenia</button>
+    </nav>
+
+    <!-- MÓJ GRAFIK -->
+    <div class="panel active" id="panel-moj">
+      <div class="card">
+        <div class="hint">Kliknij pole, żeby przełączyć: brak ustawień → dostępny/a → niedostępny/a. Kliknij ✏️ żeby dodać krótką notatkę do slotu.</div>
+        <div style="overflow-x:auto;">
+          <table class="grafik-table" id="mojaTabela"></table>
+        </div>
+        <div class="legend">
+          <span><span class="dot dostepny"></span> Dostępny/a</span>
+          <span><span class="dot niedostepny"></span> Niedostępny/a</span>
+          <span><span class="dot brak"></span> Brak ustawień</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAŁA EKIPA -->
+    <div class="panel" id="panel-ekipa">
+      <div class="card">
+        <div class="hint">Widok zbiorczy — kto kiedy jest dostępny. Najedź na pole, żeby zobaczyć notatkę.</div>
+        <div class="team-table-wrap">
+          <table class="team-table" id="teamTabela"></table>
+        </div>
+        <div class="empty-info" id="teamPusto" style="display:none;">Nikt jeszcze nie ustawił swojej dostępności na tym urządzeniu.</div>
+        <div class="legend">
+          <span><span class="dot dostepny"></span> Dostępny/a</span>
+          <span><span class="dot niedostepny"></span> Niedostępny/a</span>
+          <span><span class="dot brak"></span> Brak ustawień</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WYDARZENIA -->
+    <div class="panel" id="panel-wydarzenia">
+      <div class="card">
+        <div class="hint">Dodaj wydarzenie — datę, godzinę i co się wtedy dzieje (mecz, zbiórka, dyżur itp.).</div>
+        <label for="wydDataInput">Data</label>
+        <input type="date" id="wydDataInput">
+        <label for="wydGodzinaInput">Godzina</label>
+        <input type="time" id="wydGodzinaInput">
+        <label for="wydOpisInput">Co się dzieje</label>
+        <input type="text" id="wydOpisInput" maxlength="80" placeholder="np. Mecz ligowy, zbiórka ekipy...">
+        <button class="btn" id="wydDodajBtn">Dodaj wydarzenie</button>
+      </div>
+
+      <div class="card">
+        <div id="wydLista"></div>
+        <div class="empty-info" id="wydPusto" style="display:none;">Brak zaplanowanych wydarzeń — dodaj pierwsze powyżej.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>© Chibi Pink Studio</footer>
+</div>
+
+<script>
+  // ============================================================
+  // --- STAŁE / DANE ---
+  // ============================================================
+  const DNI = ['Pon','Wt','Śr','Czw','Pt','Sob','Nd'];
+  const PORY = ['Rano','Popołudnie','Wieczór'];
+  const KLUCZ_STORAGE = 'grafikEkipyDane';
+  const KLUCZ_NICK = 'grafikAktualnyNick';
+
+  function slotId_(dzien, pora){ return dzien + '-' + pora; }
+
+  // ============================================================
+  // --- POMOCNICZE: localStorage ---
+  // ============================================================
+  function wczytajDane_(){
+    try{ return JSON.parse(localStorage.getItem(KLUCZ_STORAGE) || '{}'); }
+    catch(e){ return {}; }
+  }
+  function zapiszDane_(dane){
+    try{ localStorage.setItem(KLUCZ_STORAGE, JSON.stringify(dane)); } catch(e){}
+  }
+  function wczytajNick_(){
+    return localStorage.getItem(KLUCZ_NICK) || '';
+  }
+  function zapiszNick_(nick){
+    try{ localStorage.setItem(KLUCZ_NICK, nick); } catch(e){}
+  }
+  function escapeHtml_(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ============================================================
+  // --- LOGOWANIE (sam nick, bez hasła) ---
+  // ============================================================
+  const loginCard = document.getElementById('loginCard');
+  const zalogowanyCard = document.getElementById('zalogowanyCard');
+  const appSection = document.getElementById('appSection');
+  const aktualnyNickLabel = document.getElementById('aktualnyNickLabel');
+  let aktualnyNick = '';
+
+  function pokazZalogowany_(nick){
+    aktualnyNick = nick;
+    loginCard.style.display = 'none';
+    zalogowanyCard.style.display = 'block';
+    appSection.style.display = 'block';
+    aktualnyNickLabel.textContent = '👋 Cześć, ' + nick + '!';
+    renderujMojaTabele_();
+    renderujTabeleEkipy_();
+  }
+
+  function pokazLogowanie_(){
+    aktualnyNick = '';
+    loginCard.style.display = 'block';
+    zalogowanyCard.style.display = 'none';
+    appSection.style.display = 'none';
+    document.getElementById('nickInput').value = '';
+  }
+
+  document.getElementById('wejdzBtn').addEventListener('click', () => {
+    const nick = document.getElementById('nickInput').value.trim();
+    if(!nick) return;
+    zapiszNick_(nick);
+    pokazZalogowany_(nick);
+  });
+  document.getElementById('nickInput').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') document.getElementById('wejdzBtn').click();
+  });
+  document.getElementById('zmienNickBtn').addEventListener('click', () => {
+    zapiszNick_('');
+    pokazLogowanie_();
+  });
+
+  // przy wejściu na stronę: jeśli nick już zapamiętany, wchodzimy od razu
+  const zapamietanyNick = wczytajNick_();
+  if(zapamietanyNick){ pokazZalogowany_(zapamietanyNick); }
+
+  // ============================================================
+  // --- ZAKŁADKI ---
+  // ============================================================
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      if(btn.dataset.tab === 'ekipa') renderujTabeleEkipy_();
+      if(btn.dataset.tab === 'wydarzenia') renderujWydarzenia_();
+    });
+  });
+
+  // ============================================================
+  // --- MÓJ GRAFIK ---
+  // ============================================================
+  function pobierzMojSlot_(dzien, pora){
+    const dane = wczytajDane_();
+    const moje = dane[aktualnyNick] || {};
+    return moje[slotId_(dzien, pora)] || { status: 0, notatka: '' };
+  }
+
+  function ustawMojSlot_(dzien, pora, slot){
+    const dane = wczytajDane_();
+    if(!dane[aktualnyNick]) dane[aktualnyNick] = {};
+    dane[aktualnyNick][slotId_(dzien, pora)] = slot;
+    zapiszDane_(dane);
+  }
+
+  function renderujMojaTabele_(){
+    const tabela = document.getElementById('mojaTabela');
+    let html = '<thead><tr><th></th>';
+    PORY.forEach(p => html += '<th>' + p + '</th>');
+    html += '</tr></thead><tbody>';
+
+    DNI.forEach(dzien => {
+      html += '<tr><th style="text-align:left;">' + dzien + '</th>';
+      PORY.forEach(pora => {
+        const slot = pobierzMojSlot_(dzien, pora);
+        const klasa = slot.status === 1 ? 'dostepny' : (slot.status === -1 ? 'niedostepny' : '');
+        const tekst = slot.status === 1 ? 'Wolne' : (slot.status === -1 ? 'Zajęte' : '—');
+        const notatkaDot = slot.notatka ? '<span class="slot-note-dot">✏️</span>' : '';
+        html += '<td><div class="slot-cell ' + klasa + '" data-dzien="' + dzien + '" data-pora="' + pora + '" title="' + escapeHtml_(slot.notatka || '') + '">' + notatkaDot + tekst + '</div></td>';
+      });
+      html += '</tr>';
+    });
+    html += '</tbody>';
+    tabela.innerHTML = html;
+
+    tabela.querySelectorAll('.slot-cell').forEach(cell => {
+      cell.addEventListener('click', (e) => {
+        const dzien = cell.dataset.dzien;
+        const pora = cell.dataset.pora;
+        const slot = pobierzMojSlot_(dzien, pora);
+        // cykl: 0 -> 1 -> -1 -> 0
+        const nowyStatus = slot.status === 0 ? 1 : (slot.status === 1 ? -1 : 0);
+        ustawMojSlot_(dzien, pora, { status: nowyStatus, notatka: slot.notatka || '' });
+        renderujMojaTabele_();
+      });
+      // prawy klik / długie przytrzymanie na notatkę pomijamy — używamy podwójnego kliknięcia
+      cell.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        const dzien = cell.dataset.dzien;
+        const pora = cell.dataset.pora;
+        const slot = pobierzMojSlot_(dzien, pora);
+        const nowaNotatka = window.prompt('Notatka do: ' + dzien + ' ' + pora, slot.notatka || '');
+        if(nowaNotatka !== null){
+          ustawMojSlot_(dzien, pora, { status: slot.status, notatka: nowaNotatka.slice(0, 60) });
+          renderujMojaTabele_();
+        }
+      });
+    });
+  }
+
+  // ============================================================
+  // --- CAŁA EKIPA ---
+  // ============================================================
+  function renderujTabeleEkipy_(){
+    const dane = wczytajDane_();
+    const nicki = Object.keys(dane);
+    const tabela = document.getElementById('teamTabela');
+    const pusto = document.getElementById('teamPusto');
+
+    if(nicki.length === 0){
+      tabela.innerHTML = '';
+      pusto.style.display = 'block';
+      return;
+    }
+    pusto.style.display = 'none';
+
+    let html = '<thead><tr><th></th>';
+    DNI.forEach(dzien => {
+      PORY.forEach(pora => {
+        html += '<th title="' + dzien + ' ' + pora + '">' + dzien[0] + '<br>' + pora[0] + '</th>';
+      });
+    });
+    html += '</tr></thead><tbody>';
+
+    nicki.forEach(nick => {
+      html += '<tr><td class="team-nick">' + escapeHtml_(nick) + (nick === aktualnyNick ? ' (Ty)' : '') + '</td>';
+      DNI.forEach(dzien => {
+        PORY.forEach(pora => {
+          const slot = (dane[nick] || {})[slotId_(dzien, pora)] || { status: 0, notatka: '' };
+          const klasa = slot.status === 1 ? 'dostepny' : (slot.status === -1 ? 'niedostepny' : '');
+          const tytul = dzien + ' ' + pora + (slot.notatka ? (' — ' + slot.notatka) : '');
+          html += '<td><div class="team-dot ' + klasa + '" title="' + escapeHtml_(tytul) + '"></div></td>';
+        });
+      });
+      html += '</tr>';
+    });
+    html += '</tbody>';
+    tabela.innerHTML = html;
+  }
+
+  // ============================================================
+  // --- WYDARZENIA (data + godzina + opis) ---
+  // ============================================================
+  const KLUCZ_WYDARZENIA = 'grafikWydarzenia';
+  const MIESIACE_SKROT = ['STY','LUT','MAR','KWI','MAJ','CZE','LIP','SIE','WRZ','PAŹ','LIS','GRU'];
+
+  function wczytajWydarzenia_(){
+    try{ return JSON.parse(localStorage.getItem(KLUCZ_WYDARZENIA) || '[]'); }
+    catch(e){ return []; }
+  }
+  function zapiszWydarzenia_(lista){
+    try{ localStorage.setItem(KLUCZ_WYDARZENIA, JSON.stringify(lista)); } catch(e){}
+  }
+
+  function renderujWydarzenia_(){
+    const lista = wczytajWydarzenia_();
+    const kontener = document.getElementById('wydLista');
+    const pusto = document.getElementById('wydPusto');
+
+    if(lista.length === 0){
+      kontener.innerHTML = '';
+      pusto.style.display = 'block';
+      return;
+    }
+    pusto.style.display = 'none';
+
+    // sortowanie chronologiczne: najbliższe wydarzenia na górze
+    const posortowane = [...lista].sort((a, b) => {
+      return (a.data + ' ' + a.godzina).localeCompare(b.data + ' ' + b.godzina);
+    });
+
+    const dzisiaj = new Date().toISOString().slice(0, 10);
+
+    let html = '';
+    posortowane.forEach((wyd) => {
+      const oryginalnyIndeks = lista.indexOf(wyd);
+      const [rok, miesiac, dzien] = wyd.data.split('-');
+      const nazwaMiesiaca = MIESIACE_SKROT[parseInt(miesiac, 10) - 1] || '';
+      const przeszle = wyd.data < dzisiaj ? 'przeszle' : '';
+
+      html += '<div class="wydarzenie-item ' + przeszle + '">' +
+        '<div class="wyd-data-badge"><div class="dzien">' + dzien + '</div><div class="miesiac">' + nazwaMiesiaca + '</div></div>' +
+        '<div class="wyd-godzina">🕒 ' + (wyd.godzina || '—') + '</div>' +
+        '<div><div class="wyd-opis">' + escapeHtml_(wyd.opis) + '</div>' +
+        '<div class="wyd-dodal">dodał/a: ' + escapeHtml_(wyd.dodalNick) + '</div></div>' +
+        '<button class="wyd-usun" data-indeks="' + oryginalnyIndeks + '" title="Usuń wydarzenie">🗑️</button>' +
+        '</div>';
+    });
+    kontener.innerHTML = html;
+
+    kontener.querySelectorAll('.wyd-usun').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const indeks = parseInt(btn.dataset.indeks, 10);
+        const aktualna = wczytajWydarzenia_();
+        aktualna.splice(indeks, 1);
+        zapiszWydarzenia_(aktualna);
+        renderujWydarzenia_();
+      });
+    });
+  }
+
+  document.getElementById('wydDodajBtn').addEventListener('click', () => {
+    const data = document.getElementById('wydDataInput').value;
+    const godzina = document.getElementById('wydGodzinaInput').value;
+    const opis = document.getElementById('wydOpisInput').value.trim();
+
+    if(!data || !opis){
+      window.alert('Podaj przynajmniej datę i opis wydarzenia.');
+      return;
+    }
+
+    const lista = wczytajWydarzenia_();
+    lista.push({
+      data: data,
+      godzina: godzina,
+      opis: opis.slice(0, 80),
+      dodalNick: aktualnyNick || '???'
+    });
+    zapiszWydarzenia_(lista);
+    renderujWydarzenia_();
+
+    document.getElementById('wydDataInput').value = '';
+    document.getElementById('wydGodzinaInput').value = '';
+    document.getElementById('wydOpisInput').value = '';
+  });
+</script>
+</body>
+</html>
